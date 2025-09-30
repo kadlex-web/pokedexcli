@@ -13,7 +13,7 @@ func cleanInput(text string) []string {
 	trimmedAndLoweredInput := strings.ToLower(trimmedInput)
 	// Step 3 -- split string into a slice of strings, where each item is a word within the original string
 	cleanedInput := strings.Fields(trimmedAndLoweredInput)
-	
+
 	return cleanedInput
 }
 

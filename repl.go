@@ -13,22 +13,22 @@ type cliCommand struct {
 	description string
 	callback    func() error
 }
+// map which defines supported commands
+var commands = map[string]cliCommand{
+	"exit": {
+		name:        "exit",
+		description: "Exit the Pokedex",
+		callback:    commandExit,
+	},
+	"help": {
+		name:		"help",
+		description: "Displays a help message",
+		callback:	commandHelp,
+	},
+}
 
 // Function which accepts the callback
 func ProcessCommand(command string) {
-	// map which defines supported commands
-	commands := map[string]cliCommand{
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
-		"help": {
-			name:		"help",
-			description: "Displays a help message",
-			callback:	commandHelp,
-		},
-	}
 	//takes the cleaned command input and sees if it's in the commands map
 	//if there's a match call the call back and return any errors
 	elem, ok := commands[command]
@@ -49,7 +49,11 @@ func commandExit() error {
 }
 // callback for help command
 func commandHelp() error {
-	println("asking for help I see..")
+	fmt.Print("Welcome to the Pokedex!\n")
+	fmt.Println("Usage:")
+	fmt.Println()
+	fmt.Println("help: Displays a help message")
+	fmt.Println("exit: Exit the Pokedex")
 	return nil
 }
 
@@ -68,6 +72,7 @@ func cleanInput(text string) []string {
 func startRepl() {
 	// need to gracefully handle if the user submits a command with no input
 	scanner := bufio.NewScanner(os.Stdin)
+
 	fmt.Print("Pokedex > ")
 	for scanner.Scan() {
 		input := cleanInput(scanner.Text())
@@ -75,7 +80,7 @@ func startRepl() {
 			fmt.Println("Command of 0 length submitted")
 		}
 		command := input[0]
-		fmt.Printf("Your command was %s\n", command)
+		//fmt.Printf("Your command was %s\n", command)
 		ProcessCommand(command)
 		fmt.Print("Pokedex > ")
 	}

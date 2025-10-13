@@ -13,28 +13,18 @@ type cliCommand struct {
 	description string
 	callback    func() error
 }
-// map which defines supported commands
-var commands = map[string]cliCommand{
-	"exit": {
-		name:        "exit",
-		description: "Exit the Pokedex",
-		callback:    commandExit,
-	},
-	"help": {
-		name:		"help",
-		description: "Displays a help message",
-		callback:	commandHelp,
-	},
-}
 
 // Function which accepts the callback
 func ProcessCommand(command string) {
 	//takes the cleaned command input and sees if it's in the commands map
 	//if there's a match call the call back and return any errors
-	elem, ok := commands[command]
+	elem, ok := getCommands()[command]
 	if ok {
-		// If the command exists in the commands map, execute it 
-		elem.callback()
+		// If the command exists in the commands map, execute it
+		err := elem.callback()
+		if err != nil {
+			fmt.Println(err)
+		}
 	} else {
 		// if not just print Unknown command
 		fmt.Println("Unknown command")
@@ -47,6 +37,7 @@ func commandExit() error {
 	os.Exit(0)
 	return nil
 }
+
 // callback for help command
 func commandHelp() error {
 	fmt.Print("Welcome to the Pokedex!\n")
@@ -68,6 +59,21 @@ func cleanInput(text string) []string {
 	return cleanedInput
 }
 
+// Gets all possible commands. For use in the help function but also allows proper initialization
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+	}
+}
 
 func startRepl() {
 	// need to gracefully handle if the user submits a command with no input

@@ -92,6 +92,7 @@ func cleanInput(text string) []string {
 	return cleanedInput
 }
 
+
 func startRepl() {
 	// need to gracefully handle if the user submits a command with no input
 	scanner := bufio.NewScanner(os.Stdin)

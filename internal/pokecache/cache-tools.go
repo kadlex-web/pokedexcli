@@ -3,7 +3,6 @@ package pokecache
 // need to close the cache when program exits
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -61,44 +60,20 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 
 
 func (c *Cache) reapLoop(interval time.Duration) {
-	fmt.Println("interval value:", interval)
-	ticker := time.NewTicker(interval) // creates a ticker that will run for the chosen Duration
+	//fmt.Println("interval value:", interval)
+	ticker := time.NewTicker(interval) // creates a ticker that will tick for the chosen duration
 	// most tickers run for a fixed amount of time -- in our case we want the ticker to run for duration of application
 	// we could use defer.Ticker.Stop() if we needed a ticker to run until a certain condition was met.
-
 	// go rountine which checks if a cache entry has expired and delete it if so
 	go func() {
-		for range ticker.C {
-			t := <-ticker.C
+		for t := range ticker.C {
 			for entry := range c.cacheMap {
-				if t.Round(time.Second).Sub(c.cacheMap[entry].createdAt) >= interval {
-					fmt.Println("duration has passed -- entry deleted")
+				z := c.cacheMap[entry].createdAt.Round(time.Millisecond)
+				if (t.Sub(z).Round(time.Millisecond)) >= interval {
 					c.Remove(entry)
 				}
-			}	
+			}
+	
 		}
 	}()
 }
-
-/*
-func main() {
-	cache := NewCache(5000 * time.Millisecond)
-	data := []byte("nothing to see here")
-	data2 := []byte("seriously don't look")
-	cache.Add("http://example.com", data)
-	cache.Add("http://google.com", data2)
-
-	for {
-		time.Sleep(500 * time.Millisecond)
-
-		_, exists := cache.Get("http://example.com")
-
-		if (exists) {
-			fmt.Println("key still there")
-		} else {
-			fmt.Println("key deleted")
-	}
-	}
-
-}
-*/

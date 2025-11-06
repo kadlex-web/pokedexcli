@@ -1,6 +1,11 @@
 package main
 
-import "testing"
+import (
+	"testing"
+	"pokedexcli/internal/pokecache"
+	"time"
+)
+
 
 func TestCleanInput(t *testing.T) {
 	/* Need to tests to check the following
@@ -46,5 +51,62 @@ func TestCleanInput(t *testing.T) {
 				t.Errorf("%s does not match %s", word, expectedWord)
 			}
 		}
+	}
+}
+
+func TestAddGetRemove(t *testing.T) {
+	// add keys to the cache and see if they are accessible
+	cases := []struct {
+		key string
+		val []byte
+	}{
+		{
+			key: "http://google.com/",
+			val: []byte("silly data"),
+		},
+		{
+			key: "http://example.com",
+			val: []byte("a fine example"),
+		},
+	}
+	for _, c := range cases {
+		cache := pokecache.NewCache(5 * time.Second)
+		cache.Add(c.key, c.val)
+		val, ok := cache.Get(c.key)
+		if !ok {
+			t.Errorf("expected to find key")
+			return
+		}
+		if string(val) != string(c.val) {
+			t.Errorf("expected to find value")
+			return
+		}
+
+		cache.Remove(c.key)
+		_, ok = cache.Get(c.key)
+		if ok {
+			t.Errorf("value should be deleted")
+		}
+	}
+}
+
+func TestReapLoop(t *testing.T) {
+	const baseTime = 5 * time.Millisecond
+	const waitTime = baseTime + (5 * time.Millisecond)
+	cache := pokecache.NewCache(baseTime)
+	cache.Add("https://example.com", []byte("data"))
+
+	_, ok := cache.Get("https://example.com")
+	if !ok {
+		t.Errorf("expected to find key")
+		return
+	}
+
+	time.Sleep(waitTime)
+
+	_, ok = cache.Get("https://example.com")
+	if ok {
+		t.Errorf("expected to not find the key")
+		return
 	}
 }

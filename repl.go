@@ -2,17 +2,20 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"pokedexcli/internal/pokeapi_tools"
+	"pokedexcli/internal/pokecache"
+	"strings"
+	"time"
 )
 
 // struct which defines behavior for a cliCommand struct (object)
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, *pokecache.Cache) error
 }
 
 // config for storing previous and next map urls
@@ -48,14 +51,14 @@ func getCommands() map[string]cliCommand {
 }
 
 // Function which accepts the callback
-func ProcessCommand(command string, c *config) {
+func ProcessCommand(command string, c *config, cache *pokecache.Cache) {
 	//takes the cleaned command input and sees if it's in the commands map
 	//if there's a match call the call back and return any errors
 	commands := getCommands()
 	elem, ok := commands[command]
 	if ok {
 		// If the command exists in the commands map, execute it
-		elem.callback(c)
+		elem.callback(c, cache)
 	} else {
 		// if not just print Unknown command
 		fmt.Println("Unknown command")
@@ -63,15 +66,17 @@ func ProcessCommand(command string, c *config) {
 }
 
 // callback for exit command
-func commandExit(c *config) error {
+func commandExit(c *config, cache *pokecache.Cache) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(c *config) error {
+func commandMap(c *config, cache *pokecache.Cache) error {
+	// initial state -- nothing in the cache, first map command fired
 	if (c.previous_url == "" && c.next_url == "") {
-		current_map, _ := pokeapi_tools.GetLocations("https://pokeapi.co/api/v2/location-area/")
+		current_map, _ := pokeapi_tools.GetLocations("https://pokeapi.co/api/v2/location-area/", cache)
+
 		// prints all the results within the json object
 		for _, location := range current_map.Results {
 			fmt.Printf("%v\n", location.Name)
@@ -79,7 +84,7 @@ func commandMap(c *config) error {
 		c.next_url = current_map.Next
 		c.previous_url = "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20"
 	} else {
-		current_map, _ := pokeapi_tools.GetLocations(c.next_url)
+		current_map, _ := pokeapi_tools.GetLocations(c.next_url, cache)
 		for _, location := range current_map.Results {
 			fmt.Printf("%v\n", location.Name)
 		}
@@ -89,13 +94,13 @@ func commandMap(c *config) error {
 	return nil
 }
 
-func commandMapBack(c *config) error {
+func commandMapBack(c *config, cache *pokecache.Cache) error {
 	// if user is on the first page, give them feedback
 	if (c.previous_url == "") {
 		fmt.Println("youre already on the first page")
 		return nil
 	}
-	current_map, _ := pokeapi_tools.GetLocations(c.previous_url)
+	current_map, _ := pokeapi_tools.GetLocations(c.previous_url, cache)
 	for _, location := range current_map.Results {
 		fmt.Printf("%v\n", location.Name)
 	}
@@ -105,7 +110,7 @@ func commandMapBack(c *config) error {
 }
 
 // callback for help command
-func commandHelp(c *config) error {
+func commandHelp(c *config, cache *pokecache.Cache) error {
 	commands := getCommands()
 
 	fmt.Print("Welcome to the Pokedex!\n")
@@ -134,10 +139,13 @@ func cleanInput(text string) []string {
 func startRepl() {
 	// need to gracefully handle if the user submits a command with no input
 	scanner := bufio.NewScanner(os.Stdin)
+	// initialize an empty configuration file
 	c := config {
 		next_url: "",
 		previous_url: "",
 	}
+	// initialize a new cache
+	cache := pokecache.NewCache(5* time.Second)
 
 	fmt.Print("Pokedex > ")
 	for scanner.Scan() {
@@ -147,7 +155,7 @@ func startRepl() {
 		}
 		command := input[0]
 		//fmt.Printf("Your command was %s\n", command)
-		ProcessCommand(command, &c)
+		ProcessCommand(command, &c, &cache)
 		fmt.Print("Pokedex > ")
 	}
 }

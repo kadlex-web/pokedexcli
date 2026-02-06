@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"pokedexcli/internal/pokecache"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
 // callback for exit command

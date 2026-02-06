@@ -9,7 +9,7 @@ import (
 
 type Cache struct {
 	cacheMap map[string]cacheEntry //map of cacheEntries with a string key
-	mu       *sync.RWMutex           // guards access to the struct map
+	mu       *sync.RWMutex         // guards access to the struct map
 }
 
 type cacheEntry struct {
@@ -36,7 +36,7 @@ func (c *Cache) Add(key string, val []byte) {
 	}
 }
 
-// used to safely delete values 
+// used to safely delete values
 func (c *Cache) Remove(key string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -58,7 +58,6 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 	return nil, false
 }
 
-
 func (c *Cache) reapLoop(interval time.Duration) {
 	//fmt.Println("interval value:", interval)
 	ticker := time.NewTicker(interval) // creates a ticker that will tick for the chosen duration
@@ -73,7 +72,7 @@ func (c *Cache) reapLoop(interval time.Duration) {
 					c.Remove(entry)
 				}
 			}
-	
+
 		}
 	}()
 }

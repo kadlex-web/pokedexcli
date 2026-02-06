@@ -1,27 +1,17 @@
-package pokeapi_tools
+package pokeapi
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"pokedexcli/internal/pokecache"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
-type locationJson struct {
-	// json:count corresponds to the json data representation and allows mapping upon unmarshalling
-	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
-
-func GetLocations(url string, cache *pokecache.Cache) (locationJson, error) {
-	// define an empty locationJson struct for Marshalling values
-	area_map := locationJson{}
+func GetLocations(url string, cache *pokecache.Cache) (LocationJson, error) {
+	// define an empty LocationJson struct for Marshalling values
+	area_map := LocationJson{}
 
 	// perform a conditional checking to see if the passed url value already has been loaded
 	val, ok := cache.Get(url)
@@ -50,7 +40,7 @@ func GetLocations(url string, cache *pokecache.Cache) (locationJson, error) {
 		if exists {
 			fmt.Println("value written to cache")
 		}
-		// now unmarshal the body and map it to the locationJSON area_map
+		// now unmarshal the body and map it to the LocationJson area_map
 		err = json.Unmarshal(body, &area_map)
 		if err != nil {
 			return area_map, err

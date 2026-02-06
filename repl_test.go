@@ -2,10 +2,10 @@ package main
 
 import (
 	"testing"
-	"pokedexcli/internal/pokecache"
 	"time"
-)
 
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
+)
 
 func TestCleanInput(t *testing.T) {
 	/* Need to tests to check the following

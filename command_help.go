@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"pokedexcli/internal/pokecache"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
 // callback for help command

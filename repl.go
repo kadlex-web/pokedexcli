@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"pokedexcli/internal/pokecache"
 	"strings"
 	"time"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
 // struct which defines behavior for a cliCommand struct (object)
@@ -46,9 +47,9 @@ func getCommands() map[string]cliCommand {
 			callback:    commandMapBack,
 		},
 		"explore": {
-			name: 		"explore",
+			name:        "explore",
 			description: "lists the pokemon located in the area",
-			callback: commandExplore,
+			callback:    commandExplore,
 		},
 	}
 }

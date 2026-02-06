@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"pokedexcli/internal/pokecache"
 	"net/http"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
 func commandExplore(c *config, cache *pokecache.Cache, input []string) error {

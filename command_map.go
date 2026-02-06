@@ -1,15 +1,16 @@
 package main
 
 import (
-	"pokedexcli/internal/pokecache"
-	"pokedexcli/internal/pokeapi_tools"
 	"fmt"
+
+	"github.com/kadlex-web/pokedexcli/internal/pokeapi"
+	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
 func commandMap(c *config, cache *pokecache.Cache, input []string) error {
 	// initial state -- nothing in the cache, first map command fired
 	if c.previous_url == "" && c.next_url == "" {
-		current_map, _ := pokeapi_tools.GetLocations("https://pokeapi.co/api/v2/location-area/?offset=0&limit=20", cache)
+		current_map, _ := pokeapi.GetLocations("https://pokeapi.co/api/v2/location-area/?offset=0&limit=20", cache)
 
 		// prints all the results within the json object
 		for _, location := range current_map.Results {
@@ -18,7 +19,7 @@ func commandMap(c *config, cache *pokecache.Cache, input []string) error {
 		c.next_url = current_map.Next
 		c.previous_url = "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20"
 	} else {
-		current_map, _ := pokeapi_tools.GetLocations(c.next_url, cache)
+		current_map, _ := pokeapi.GetLocations(c.next_url, cache)
 		for _, location := range current_map.Results {
 			fmt.Printf("%v\n", location.Name)
 		}
@@ -34,7 +35,7 @@ func commandMapBack(c *config, cache *pokecache.Cache, input []string) error {
 		fmt.Println("youre already on the first page")
 		return nil
 	}
-	current_map, _ := pokeapi_tools.GetLocations(c.previous_url, cache)
+	current_map, _ := pokeapi.GetLocations(c.previous_url, cache)
 	for _, location := range current_map.Results {
 		fmt.Printf("%v\n", location.Name)
 	}

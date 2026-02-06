@@ -59,6 +59,7 @@ func ProcessCommand(input []string, c *config, cache *pokecache.Cache) {
 	//takes the cleaned command input and sees if it's in the commands map
 	//if there's a match call the call back and return any errors
 	commands := getCommands()
+	// TODO: Rewrite commands to accept multiple inputs. for exploring locations or catching pokemon
 	elem, ok := commands[input[0]]
 	if ok {
 		elem.callback(c, cache, input)

@@ -22,7 +22,7 @@ type cliCommand struct {
 type config struct {
 	next_url     string
 	previous_url string
-	pokedex      map[string]pokeapi.Pokemon
+	pokedex      map[string]pokeapi.PokeDataJson
 }
 
 // map which defines supported commands
@@ -104,7 +104,7 @@ func startRepl() {
 	c := config{
 		next_url:     "",
 		previous_url: "",
-		pokedex:      make(map[string]pokeapi.Pokemon),
+		pokedex:      make(map[string]pokeapi.PokeDataJson),
 	}
 	// initialize a new cache
 	cache := pokecache.NewCache(15 * time.Second)

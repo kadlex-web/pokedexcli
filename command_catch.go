@@ -8,18 +8,6 @@ import (
 	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
-// simplify adding to dex by creating function to create Pokemon struct
-func addToPokedex(data pokeapi.PokeDataJson) pokeapi.Pokemon {
-	pokemon := pokeapi.Pokemon{
-		Name:   data.Name,
-		Height: data.Height,
-		Weight: data.Weight,
-		//stats:    data.Stats,
-		//poketype: data.Types,
-	}
-	return pokemon
-}
-
 func catch(exp int) bool {
 	//fmt.Println("Pokemon's base exp is:", exp)
 	// x is a value between 0 and base exp
@@ -45,10 +33,10 @@ func commandCatch(c *config, cache *pokecache.Cache, input []string) error {
 			fmt.Println("Requested Pokemon does not exist!")
 			return nil
 		}
-		fmt.Printf("Throwing a Pokeball at %v\n", mon)
+		fmt.Printf("Throwing a Pokeball at %v...\n", mon)
 		if catch(pokeData.BaseExperience) {
 			fmt.Printf("%v was caught\n", mon)
-			c.pokedex[mon] = addToPokedex(pokeData)
+			c.pokedex[mon] = pokeData
 
 		} else {
 			fmt.Printf("%v escaped!\n", mon)

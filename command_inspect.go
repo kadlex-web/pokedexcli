@@ -15,20 +15,19 @@ func commandInspect(c *config, cache *pokecache.Cache, input []string) error {
 		return nil
 	}
 	// print the following to standard output as the pokemon's info
-	fmt.Println()
 	fmt.Printf("Name: %s\n", pokemon.Name)
 	fmt.Printf("Height: %d\n", pokemon.Height)
 	fmt.Printf("Weight: %d\n", pokemon.Weight)
 	// for every value in the stats sheet -- access struct values and print
-	/*
-		fmt.Println("Stats:")
-		for _, stat := range pokemon.Stats {
-			fmt.Printf("\t-%v: %v\n", stat.stat.name, stat.base_stat)
-		}
-		fmt.Println("Types:")
-		for _, poketype := range pokemon.Types {
-			fmt.Printf("\t-%v\n", poketype.type.name)
-		}
-	*/
+
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf("\t-%v: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, poketype := range pokemon.Types {
+		fmt.Printf("\t-%v\n", poketype.Type.Name)
+	}
+
 	return nil
 }

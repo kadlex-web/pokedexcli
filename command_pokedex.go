@@ -12,7 +12,7 @@ func commandPokedex(c *config, cache *pokecache.Cache, input []string) error {
 		return nil
 	}
 	for _, pokemon := range c.pokedex {
-		fmt.Println("  -", pokemon)
+		fmt.Println("  -", pokemon.Name)
 	}
 	return nil
 }

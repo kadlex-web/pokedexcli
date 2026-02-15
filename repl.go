@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kadlex-web/pokedexcli/internal/pokeapi"
 	"github.com/kadlex-web/pokedexcli/internal/pokecache"
 )
 
@@ -21,6 +22,7 @@ type cliCommand struct {
 type config struct {
 	next_url     string
 	previous_url string
+	pokedex      map[string]pokeapi.Pokemon
 }
 
 // map which defines supported commands
@@ -55,6 +57,16 @@ func getCommands() map[string]cliCommand {
 			name:        "catch",
 			description: "attempts to catch a pokemon",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "catch",
+			description: "attempts to catch a pokemon",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "catch",
+			description: "attempts to catch a pokemon",
+			callback:    commandPokedex,
 		},
 	}
 }
@@ -92,9 +104,11 @@ func startRepl() {
 	c := config{
 		next_url:     "",
 		previous_url: "",
+		pokedex:      make(map[string]pokeapi.Pokemon),
 	}
 	// initialize a new cache
 	cache := pokecache.NewCache(15 * time.Second)
+	// initialize a Pokedex
 
 	fmt.Print("Pokedex > ")
 	for scanner.Scan() {
